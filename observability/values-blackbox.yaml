@@ -1,0 +1,8 @@
+fullnameOverride: blackbox-exporter
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 32Mi
+  limits:
+    memory: 64Mi

@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: robot-shop-web
+  namespace: monitoring
+spec:
+  jobName: robot-shop-web
+  interval: 15s
+  scrapeTimeout: 10s
+  module: http_2xx
+  prober:
+    url: blackbox-exporter:9115
+    path: /probe
+  targets:
+    staticConfig:
+      static:
+        - http://web.robot-shop.svc.cluster.local:8080/
+      labels:
+        service: web
+        target_namespace: robot-shop

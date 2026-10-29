@@ -1,0 +1,81 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: robot-shop-slo
+  namespace: monitoring
+  labels:
+    role: alert-rules
+spec:
+  groups:
+    - name: robot-shop-slo
+      interval: 30s
+      rules:
+        - record: job:sli_probe_success:ratio1h
+          expr: avg_over_time(probe_success{job="robot-shop-web"}[1h])
+
+        - record: job:sli_probe_success:ratio6h
+          expr: avg_over_time(probe_success{job="robot-shop-web"}[6h])
+
+        - record: job:sli_probe_latency:ratio30m
+          expr: |
+            sum(rate(probe_duration_seconds_bucket{job="robot-shop-web",le="0.5"}[30m]))
+            /
+            sum(rate(probe_duration_seconds_count{job="robot-shop-web"}[30m]))
+
+        - alert: RobotShopWebDown
+          expr: avg_over_time(probe_success{job="robot-shop-web"}[2m]) == 0
+          for: 1m
+          labels:
+            severity: critical
+            slo: availability
+          annotations:
+            summary: "robot-shop storefront is not responding"
+            description: "Every blackbox probe to the web Service has failed for the last 2 minutes."
+            runbook_url: "https://github.com/snr-roko/robot-shop/blob/main/docs/runbook.md#robotshopwebdown"
+
+        - alert: RobotShopAvailabilityBurnCritical
+          expr: |
+            (1 - avg_over_time(probe_success{job="robot-shop-web"}[5m])) > 0.144
+            and
+            (1 - avg_over_time(probe_success{job="robot-shop-web"}[1h])) > 0.144
+          for: 2m
+          labels:
+            severity: critical
+            slo: availability
+            budget: "1%"
+          annotations:
+            summary: "robot-shop is burning the availability budget at 14.4x"
+            description: "Failure ratio over the 5m and 1h windows both exceed 14.4x the 1% budget. At this rate the 28-day budget is gone in about two days."
+            runbook_url: "https://github.com/snr-roko/robot-shop/blob/main/docs/runbook.md#robotshopavailabilityburncritical--warning"
+
+        - alert: RobotShopAvailabilityBurnWarning
+          expr: |
+            (1 - avg_over_time(probe_success{job="robot-shop-web"}[30m])) > 0.06
+            and
+            (1 - avg_over_time(probe_success{job="robot-shop-web"}[6h])) > 0.06
+          for: 5m
+          labels:
+            severity: warning
+            slo: availability
+            budget: "1%"
+          annotations:
+            summary: "robot-shop is burning the availability budget at 6x"
+            description: "Failure ratio over the 30m and 6h windows both exceed 6x the 1% budget."
+            runbook_url: "https://github.com/snr-roko/robot-shop/blob/main/docs/runbook.md#robotshopavailabilityburncritical--warning"
+
+        - alert: RobotShopLatencyBurnWarning
+          expr: |
+            (1 - (
+              sum(rate(probe_duration_seconds_bucket{job="robot-shop-web",le="0.5"}[30m]))
+              /
+              sum(rate(probe_duration_seconds_count{job="robot-shop-web"}[30m]))
+            )) > 0.10
+          for: 10m
+          labels:
+            severity: warning
+            slo: latency
+            budget: "5%"
+          annotations:
+            summary: "robot-shop is burning the latency budget at 2x"
+            description: "More than 10% of successful probes exceeded 500ms over the last 30 minutes, twice the 5% budget."
+            runbook_url: "https://github.com/snr-roko/robot-shop/blob/main/docs/runbook.md#robotshoplatencyburnwarning"

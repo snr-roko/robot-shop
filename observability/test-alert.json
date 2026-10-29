@@ -1,0 +1,15 @@
+[
+  {
+    "labels": {
+      "alertname": "SlackPipelineTest",
+      "severity": "warning",
+      "slo": "availability",
+      "namespace": "robot-shop"
+    },
+    "annotations": {
+      "summary": "Synthetic alert: Alertmanager to Slack path check",
+      "description": "Posted by hand to /api/v2/alerts before the incident drill. If this reaches the channel, the receiver, secret mount and template all work.",
+      "runbook_url": "https://github.com/snr-roko/robot-shop/blob/main/docs/runbook.md"
+    }
+  }
+]

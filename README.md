@@ -1,5 +1,16 @@
 # Sample Microservice Application
 
+> **Capstone 2 submission.** This fork deploys Stan's Robot Shop on EKS with an observability
+> layer: kube-prometheus-stack, a blackbox probe against the storefront, an SLO with
+> error-budget alerts delivered to Slack, a dashboard provisioned from code, and a runbook.
+> Start at [`docs/capstone.md`](docs/capstone.md), then
+> [`docs/slo.md`](docs/slo.md), [`docs/runbook.md`](docs/runbook.md) and
+> [`docs/postmortem.md`](docs/postmortem.md).
+>
+> The Instana instrumentation has been removed from the chart in `K8s/helm`; the upstream
+> references to it below no longer apply to this deployment. The rest of this README is the
+> original project documentation.
+
 Stan's Robot Shop is a sample microservice application you can use as a sandbox to test and learn containerised application orchestration and monitoring techniques. It is not intended to be a comprehensive reference example of how to write a microservices application, although you will better understand some of those concepts by playing with Stan's Robot Shop. To be clear, the error handling is patchy and there is not any security built into the application.
 
 You can get more detailed information from my [blog post](https://www.instana.com/blog/stans-robot-shop-sample-microservice-application/) about this sample microservice application.
