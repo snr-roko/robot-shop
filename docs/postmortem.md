@@ -89,7 +89,14 @@ addressed by the action items above, not by paying closer attention next time.
 
 ## Evidence
 
-- `docs/drill.png`: Slack channel showing the synthetic test, the `[FIRING]` alert at 18:15
-  and the `[RESOLVED]` message.
-- `docs/grafana-dashboard.png`: the dashboard during normal operation.
-- `observability/slo-rules.yaml`: the alert definitions and thresholds referenced above.
+The Slack channel during the drill, showing the synthetic test resolving, the `[FIRING]`
+alert at 18:15 and the `[RESOLVED]` message:
+
+![Slack channel during the drill](drill.png)
+
+The dashboard in normal operation:
+
+![Robot Shop dashboard](grafana-dashboard.png)
+
+The alert definitions and thresholds referenced above are in
+`observability/slo-rules.yaml`.

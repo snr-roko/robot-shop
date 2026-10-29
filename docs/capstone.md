@@ -11,6 +11,8 @@ how each piece is configured, what was verified, and what is missing.
 - A load generator (`K8s/load-deployment.yaml`) sending 15 concurrent clients at the
   storefront, so the probe and the dashboards have something to measure.
 
+![The storefront with an item added to the cart](robot-shop-cart-add.png)
+
 ## Monitoring stack
 
 `kube-prometheus-stack` 92.16.0 installed as release `monitoring` in namespace `monitoring`:
@@ -72,7 +74,9 @@ hand in the UI.
 
 Panels: probe success over 5m, budget consumed in the last hour, pods ready, probe p95
 latency, probe success against the 99% line, probe p50/p95 over time, CPU and memory by
-container, container restarts, and not-ready pods. Screenshot: `docs/grafana-dashboard.png`.
+container, container restarts, and not-ready pods.
+
+![Robot Shop dashboard provisioned from the ConfigMap](grafana-dashboard.png)
 
 The budget panel is worth explaining: dividing the failure ratio by the 1% budget converts
 it into "percent of the monthly budget this hour cost you". A short outage reads near zero;
@@ -94,7 +98,9 @@ a full hour down reads 100.
 `web` was scaled to zero and left down for roughly ten minutes. Prometheus marked
 `RobotShopWebDown` active at 18:14:19, Slack received the firing message at 18:15, and the
 alert resolved after the deployment was restored. The full write-up is in
-`docs/postmortem.md`; the channel is captured in `docs/drill.png`.
+`docs/postmortem.md`.
+
+![Slack channel during the drill: synthetic test, firing alert, resolved alert](drill.png)
 
 Two real failures happened during the build and are documented in the same place: Grafana was
 OOM-killed by a 256Mi limit that was too small for a 13.x container with provisioning
